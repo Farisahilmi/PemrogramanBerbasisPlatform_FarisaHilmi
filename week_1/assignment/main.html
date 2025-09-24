@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Menghitung Umur - moment.js</title>
+
+  <!-- Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Background -->
+  <div class="background-anim" id="bg"></div>
+
+  <!-- Card -->
+  <div class="card">
+    <h1>Menghitung Umur</h1>
+    <p>Masukkan tanggal lahirmu:</p>
+    <input id="dob" type="date">
+    <br>
+    <button id="calcBtn">Hitung</button>
+    <button id="clearBtn" style="background:#e2e8f0;color:#111;">Reset</button>
+
+    <div id="output" class="result">
+      <div class="small">Hasil akan muncul di sini...</div>
+    </div>
+  </div>
+
+  <script>
+    // === Generate Shapes Random ===
+    const bg = document.getElementById("bg");
+    const colors = [
+      "rgba(255, 193, 7, 0.8)", // kuning
+      "rgba(220, 38, 38, 0.8)", // merah
+      "rgba(37, 99, 235, 0.8)", // biru
+      "rgba(16, 185, 129, 0.8)", // hijau
+      "rgba(168, 85, 247, 0.8)"  // ungu
+    ];
+    const shapes = ["circle","square","triangle"];
+
+    for (let i=0;i<15;i++) {
+      const div = document.createElement("div");
+      const shapeType = shapes[Math.floor(Math.random()*shapes.length)];
+      div.classList.add("shape", shapeType);
+
+      const size = Math.floor(Math.random()*50)+30;
+      if (shapeType==="circle" || shapeType==="square") {
+        div.style.width = size+"px";
+        div.style.height = size+"px";
+        div.style.background = colors[Math.floor(Math.random()*colors.length)];
+      } else if (shapeType==="triangle") {
+        const color = colors[Math.floor(Math.random()*colors.length)];
+        div.style.borderLeft = size/2+"px solid transparent";
+        div.style.borderRight = size/2+"px solid transparent";
+        div.style.borderBottom = size+"px solid "+color;
+      }
+
+      div.style.top = Math.random()*100+"%";
+      div.style.left = Math.random()*100+"%";
+      div.style.animationDuration = (5+Math.random()*6)+"s";
+
+      bg.appendChild(div);
+    }
+
+    // === Umur Calculation ===
+    const dobInput = document.getElementById('dob');
+    const calcBtn = document.getElementById('calcBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const output = document.getElementById('output');
+
+    function calculateAge(dobValue) {
+      if (!dobValue) return { error: 'Silakan pilih tanggal lahir.' };
+
+      const dob = moment(dobValue, 'YYYY-MM-DD');
+      const now = moment();
+
+      if (!dob.isValid()) return { error: 'Tanggal tidak valid.' };
+      if (dob.isAfter(now, 'day')) return { error: 'Tanggal lahir tidak boleh di masa depan.' };
+
+      const years = now.diff(dob, 'years');
+      const afterYears = dob.clone().add(years, 'years');
+      const months = now.diff(afterYears, 'months');
+      const afterMonths = afterYears.clone().add(months, 'months');
+      const days = now.diff(afterMonths, 'days');
+
+      return {
+        years, months, days,
+        dobFormatted: dob.format('DD MMMM YYYY'),
+        nowFormatted: now.format('DD MMMM YYYY')
+      };
+    }
+
+    function formatResult(res) {
+      if (res.error) return `<span style="color:red">${res.error}</span>`;
+      return `
+        ${res.years} tahun, ${res.months} bulan, ${res.days} hari
+        <div class="small">(Lahir: ${res.dobFormatted}, Hari ini: ${res.nowFormatted})</div>
+      `;
+    }
+
+    calcBtn.addEventListener('click', () => {
+      const result = calculateAge(dobInput.value);
+      output.innerHTML = formatResult(result);
+      output.classList.add("show");
+    });
+
+    clearBtn.addEventListener('click', () => {
+      dobInput.value = '';
+      output.innerHTML = '<div class="small">Hasil akan muncul di sini...</div>';
+      output.classList.remove("show");
+    });
+  </script>
+</body>
+</html>
