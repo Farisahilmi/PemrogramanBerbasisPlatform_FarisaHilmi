@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio Profesional Anda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'primary': '#2563eb', // blue-600
+              'secondary': '#facc15', // yellow-400
+              'dark': '#1e293b', // slate-800
+              'light': '#f8fafc', // slate-50
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+        }
+        .form-section {
+            display: none;
+            transition: all 0.3s ease-in-out;
+        }
+        .edit-mode .form-section {
+            display: block;
+        }
+        .edit-mode .editable-text {
+            border: 2px dashed #cbd5e1; /* slate-300 */
+            padding: 4px;
+            border-radius: 4px;
+            cursor: text;
+        }
+        .delete-btn {
+            display: none;
+        }
+        .edit-mode .delete-btn {
+            display: inline-flex;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -20px;
+            margin-top: -20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #app-container {
+            display: none;
+        }
+    </style>
+</head>
+<body class="text-dark">
+
+    <div id="loader" class="loader"></div>
+
+    <div id="app-container">
+        <!-- Tombol Mode Edit -->
+        <div class="bg-dark text-white p-4 sticky top-0 z-50 shadow-lg">
+            <div class="max-w-5xl mx-auto flex justify-between items-center">
+                <span class="font-bold text-lg">Portofolio Profesional</span>
+                <button id="toggleEditMode" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                    Aktifkan Mode Edit
+                </button>
+            </div>
+        </div>
+
+        <div id="portfolio-body" class="max-w-5xl mx-auto p-4 sm:p-8 space-y-16">
+            
+            <!-- Bagian Header / Profil -->
+            <header class="text-center space-y-4 pt-8">
+                <img id="profile-pic" src="https://placehold.co/128x128/e2e8f0/334155?text=Foto" alt="Foto Profil" class="w-32 h-32 rounded-full mx-auto object-cover shadow-md border-4 border-white">
+                
+                <div class="form-section">
+                    <label for="profile-pic-input" class="block text-sm font-medium text-slate-700 mb-1">URL Foto Profil</label>
+                    <input type="url" id="profile-pic-input" placeholder="https://example.com/foto.jpg" class="w-full max-w-sm mx-auto p-2 border border-slate-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                </div>
+
+                <h1 id="user-name" class="text-4xl font-bold text-slate-900 editable-text" contenteditable="false">Nama Lengkap Anda</h1>
+                <p id="user-title" class="text-xl text-primary font-medium editable-text" contenteditable="false">Professional Title (e.g., Digital Marketer) </p>
+            </header>
+
+             <!-- Bagian Tentang Saya -->
+            <section>
+                <h2 class="text-3xl font-bold border-b-4 border-primary pb-2 mb-6">Tentang Saya</h2>
+                <p id="user-bio" class="max-w-4xl text-slate-600 leading-relaxed editable-text" contenteditable="false">Tulis ringkasan profesional tentang diri Anda di sini. Fokus pada keahlian utama, pengalaman relevan, dan tujuan karir Anda. Buat paragraf ini menarik bagi rekruter. Klik 'Aktifkan Mode Edit' untuk mulai mengubah.</p>
+            </section>
+
+            <!-- Bagian Keahlian -->
+            <section>
+                <h2 class="text-3xl font-bold border-b-4 border-primary pb-2 mb-6">Keahlian</h2>
+                <div id="skills-container" class="flex flex-wrap gap-3">
+                    <!-- Keahlian akan ditambahkan di sini oleh JavaScript -->
+                </div>
+                <div class="form-section mt-6 p-4 bg-slate-100 rounded-lg shadow-inner">
+                    <h3 class="font-bold mb-2">Tambah Keahlian Baru</h3>
+                    <form id="add-skill-form" class="flex gap-2">
+                        <input type="text" id="skill-input" placeholder="Cth: SEO & SEM" class="flex-grow p-2 border border-slate-300 rounded-md shadow-sm focus:ring-primary focus:border-primary" required>
+                        <button type="submit" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition">Tambah</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Bagian Riwayat Kerja -->
+            <section>
+                <h2 class="text-3xl font-bold border-b-4 border-primary pb-2 mb-6">Riwayat Kerja</h2>
+                <div id="experience-container" class="space-y-8 relative">
+                    <!-- Riwayat Kerja akan ditambahkan di sini -->
+                </div>
+                 <div class="form-section mt-6 p-4 bg-slate-100 rounded-lg shadow-inner">
+                    <h3 class="font-bold mb-4">Tambah Riwayat Kerja</h3>
+                    <form id="add-experience-form" class="space-y-4">
+                        <input type="text" id="exp-title" placeholder="Jabatan" class="w-full p-2 border border-slate-300 rounded-md" required>
+                        <input type="text" id="exp-company" placeholder="Nama Perusahaan" class="w-full p-2 border border-slate-300 rounded-md" required>
+                        <input type="text" id="exp-dates" placeholder="Cth: Jan 2022 - Sekarang" class="w-full p-2 border border-slate-300 rounded-md" required>
+                        <textarea id="exp-desc" placeholder="Deskripsi pekerjaan dan pencapaian Anda dalam poin-poin." class="w-full p-2 border border-slate-300 rounded-md" rows="3" required></textarea>
+                        <button type="submit" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition">Tambah</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Bagian Portofolio / Proyek -->
+            <section>
+                <h2 class="text-3xl font-bold border-b-4 border-primary pb-2 mb-6">Proyek Saya</h2>
+                <div id="portfolio-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Proyek akan ditambahkan di sini -->
+                </div>
+                 <div class="form-section mt-6 p-4 bg-slate-100 rounded-lg shadow-inner">
+                    <h3 class="font-bold mb-4">Tambah Proyek Baru</h3>
+                    <form id="add-portfolio-form" class="space-y-4">
+                        <input type="text" id="port-title" placeholder="Nama Proyek" class="w-full p-2 border border-slate-300 rounded-md" required>
+                        <input type="url" id="port-img" placeholder="URL Gambar Proyek" class="w-full p-2 border border-slate-300 rounded-md" required>
+                        <textarea id="port-desc" placeholder="Deskripsi singkat proyek" class="w-full p-2 border border-slate-300 rounded-md" rows="3" required></textarea>
+                        <input type="url" id="port-link" placeholder="Link ke Proyek (opsional)" class="w-full p-2 border border-slate-300 rounded-md">
+                        <button type="submit" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition">Tambah</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Bagian Kontak -->
+            <section>
+                <h2 class="text-3xl font-bold border-b-4 border-primary pb-2 mb-6">Hubungi Saya</h2>
+                <div id="contact-container" class="bg-white p-8 rounded-lg shadow-md flex flex-col md:flex-row gap-8 items-center">
+                     <!-- Info Kontak -->
+                    <div class="flex-1 space-y-4">
+                        <div class="flex items-center gap-4">
+                           <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                           <span id="contact-email">email.anda@domain.com</span>
+                        </div>
+                         <div class="form-section">
+                             <input type="email" id="contact-email-input" placeholder="email.anda@domain.com" class="w-full p-2 border border-slate-300 rounded-md">
+                         </div>
+                        <div class="flex items-center gap-4">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <span id="contact-phone">+62 123 4567 890</span>
+                        </div>
+                        <div class="form-section">
+                             <input type="tel" id="contact-phone-input" placeholder="+62 123 4567 890" class="w-full p-2 border border-slate-300 rounded-md">
+                         </div>
+                    </div>
+                    <!-- Media Sosial -->
+                    <div class="flex-1">
+                        <p class="font-semibold mb-3 text-center md:text-left">Temukan saya di:</p>
+                        <div id="socials-container" class="flex justify-center md:justify-start gap-4">
+                            <!-- Ikon media sosial akan ditambahkan di sini -->
+                        </div>
+                    </div>
+                </div>
+                 <div class="form-section mt-6 p-4 bg-slate-100 rounded-lg shadow-inner">
+                    <h3 class="font-bold mb-4">Tambah Link Media Sosial</h3>
+                    <form id="add-social-form" class="space-y-4">
+                        <input type="text" id="social-name" placeholder="Nama Platform (cth: LinkedIn)" class="w-full p-2 border border-slate-300 rounded-md" required>
+                        <input type="url" id="social-url" placeholder="URL Profil Anda" class="w-full p-2 border border-slate-300 rounded-md" required>
+                        <button type="submit" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition">Tambah</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        let firebaseConfig;
+        let appId;
+
+        try {
+            // Ini akan berjalan di lingkungan produksi (seperti platform tempat kita berada)
+            firebaseConfig = JSON.parse(__firebase_config);
+            appId = __app_id;
+        } catch (e) {
+            // --- PENTING: PENGATURAN UNTUK LOKAL (VS CODE) ---
+            // Saat menjalankan file ini secara lokal, ganti nilai-nilai di bawah ini
+            // dengan konfigurasi proyek Firebase Anda sendiri.
+            // Anda bisa mendapatkannya dari:
+            // Project Settings > General > Your apps > Web app > SDK setup and configuration > Config
+            console.warn("Menjalankan dalam mode lokal. Pastikan Anda telah mengatur firebaseConfig.");
+            
+            firebaseConfig = {
+                apiKey: "GANTI_DENGAN_API_KEY_ANDA",
+                authDomain: "GANTI_DENGAN_AUTH_DOMAIN_ANDA",
+                projectId: "GANTI_DENGAN_PROJECT_ID_ANDA",
+                storageBucket: "GANTI_DENGAN_STORAGE_BUCKET_ANDA",
+                messagingSenderId: "GANTI_DENGAN_MESSAGING_SENDER_ID_ANDA",
+                appId: "GANTI_DENGAN_APP_ID_ANDA"
+            };
+            appId = 'portfolio-lokal-saya'; // Anda bisa menggunakan nama apa saja di sini
+        }
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let userId = null;
+        let userDocRef = null;
+        let isEditMode = false;
+        
+        let portfolioData = {
+            name: 'Nama Lengkap Anda',
+            title: 'Professional Title (e.g., Digital Marketer)',
+            bio: 'Tulis ringkasan profesional tentang diri Anda di sini. Fokus pada keahlian utama, pengalaman relevan, dan tujuan karir Anda. Buat paragraf ini menarik bagi rekruter.',
+            profilePic: 'https://placehold.co/128x128/e2e8f0/334155?text=Foto',
+            skills: ['Digital Marketing', 'SEO', 'Content Strategy'],
+            experiences: [],
+            portfolio: [],
+            contact: {
+                email: 'email.anda@domain.com',
+                phone: '+62 123 4567 890'
+            },
+            socials: [
+                { name: 'LinkedIn', url: 'https://linkedin.com/in/username' },
+                { name: 'GitHub', url: 'https://github.com/username' }
+            ]
+        };
+
+        const toggleEditModeBtn = document.getElementById('toggleEditMode');
+        const portfolioBody = document.getElementById('portfolio-body');
+        const loader = document.getElementById('loader');
+        const appContainer = document.getElementById('app-container');
+
+        const saveData = async () => {
+            if (!userDocRef) return;
+            try {
+                await setDoc(userDocRef, portfolioData);
+            } catch (error) {
+                console.error("Error saving data: ", error);
+            }
+        };
+        
+        const renderProfile = () => {
+            document.getElementById('user-name').textContent = portfolioData.name;
+            document.getElementById('user-title').textContent = portfolioData.title;
+            document.getElementById('user-bio').textContent = portfolioData.bio;
+            document.getElementById('profile-pic').src = portfolioData.profilePic;
+            document.getElementById('profile-pic-input').value = portfolioData.profilePic;
+        };
+
+        const renderSkills = () => {
+            const container = document.getElementById('skills-container');
+            container.innerHTML = '';
+            portfolioData.skills.forEach((skill, index) => {
+                const skillEl = document.createElement('div');
+                skillEl.className = 'bg-amber-100 text-amber-800 text-sm font-medium px-4 py-2 rounded-full flex items-center gap-2 shadow-sm';
+                skillEl.innerHTML = `<span>${skill}</span><button data-index="${index}" class="delete-btn delete-skill-btn bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">&times;</button>`;
+                container.appendChild(skillEl);
+            });
+        };
+
+        const renderExperience = () => {
+            const container = document.getElementById('experience-container');
+            container.innerHTML = '';
+            if (portfolioData.experiences.length === 0) {
+                 container.innerHTML = '<p class="text-slate-500 italic">Belum ada riwayat kerja. Tambahkan di mode edit.</p>';
+            }
+            if (portfolioData.experiences.length > 0) {
+                 const line = document.createElement('div');
+                 line.className = 'absolute left-4 top-4 bottom-4 w-0.5 bg-slate-200';
+                 container.appendChild(line);
+            }
+            portfolioData.experiences.forEach((exp, index) => {
+                const expEl = document.createElement('div');
+                expEl.className = 'pl-12 relative';
+                expEl.innerHTML = `
+                    <div class="absolute left-1.5 top-1 w-5 h-5 bg-primary rounded-full border-4 border-white"></div>
+                    <h3 class="font-bold text-xl">${exp.title}</h3>
+                    <p class="font-semibold text-slate-700">${exp.company} | <span class="font-normal text-slate-500">${exp.dates}</span></p>
+                    <p class="mt-2 text-slate-600 whitespace-pre-wrap">${exp.desc}</p>
+                    <button data-index="${index}" class="delete-btn delete-exp-btn bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold absolute top-0 right-0">&times;</button>
+                `;
+                container.appendChild(expEl);
+            });
+        };
+        
+        const renderPortfolio = () => {
+            const container = document.getElementById('portfolio-container');
+            container.innerHTML = '';
+            if (portfolioData.portfolio.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 italic md:col-span-2 lg:col-span-3">Belum ada proyek. Tambahkan di mode edit.</p>';
+            }
+            portfolioData.portfolio.forEach((item, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 group relative border border-slate-200';
+                itemEl.innerHTML = `
+                    <img src="${item.img}" alt="${item.title}" class="w-full h-48 object-cover" onerror="this.src='https://placehold.co/400x300/e2e8f0/334155?text=Gambar+Proyek'">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">${item.title}</h3>
+                        <p class="text-slate-600 text-sm mt-1">${item.desc}</p>
+                        ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline mt-4 inline-block font-semibold">Lihat Proyek &rarr;</a>` : ''}
+                    </div>
+                     <button data-index="${index}" class="delete-btn delete-port-btn bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-base font-bold absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
+                `;
+                container.appendChild(itemEl);
+            });
+        };
+
+        const renderContact = () => {
+            document.getElementById('contact-email').textContent = portfolioData.contact.email;
+            document.getElementById('contact-email-input').value = portfolioData.contact.email;
+            document.getElementById('contact-phone').textContent = portfolioData.contact.phone;
+            document.getElementById('contact-phone-input').value = portfolioData.contact.phone;
+
+            const socialsContainer = document.getElementById('socials-container');
+            socialsContainer.innerHTML = '';
+            portfolioData.socials.forEach((social, index) => {
+                const socialEl = document.createElement('div');
+                socialEl.className = 'relative';
+                socialEl.innerHTML = `
+                    <a href="${social.url}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-secondary transition-colors group">
+                        <span class="font-bold text-sm">${social.name.substring(0,2).toUpperCase()}</span>
+                    </a>
+                    <button data-index="${index}" class="delete-btn delete-social-btn bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold absolute -top-1 -right-1">&times;</button>
+                `;
+                socialsContainer.appendChild(socialEl);
+            });
+        };
+
+        const renderAll = () => {
+            renderProfile();
+            renderSkills();
+            renderExperience();
+            renderPortfolio();
+            renderContact();
+        };
+
+        const setupEventListeners = () => {
+            toggleEditModeBtn.addEventListener('click', () => {
+                isEditMode = !isEditMode;
+                portfolioBody.classList.toggle('edit-mode');
+                document.querySelectorAll('.editable-text').forEach(el => el.setAttribute('contenteditable', isEditMode));
+                toggleEditModeBtn.textContent = isEditMode ? 'Simpan & Selesai Edit' : 'Aktifkan Mode Edit';
+                if (!isEditMode) {
+                    saveData();
+                }
+            });
+
+            document.querySelectorAll('.editable-text').forEach(el => {
+                el.addEventListener('blur', (e) => {
+                    const id = e.target.id;
+                    if(id === 'user-name') portfolioData.name = e.target.textContent;
+                    if(id === 'user-title') portfolioData.title = e.target.textContent;
+                    if(id === 'user-bio') portfolioData.bio = e.target.textContent;
+                    // No need to save here, will be saved on exiting edit mode
+                });
+            });
+
+            document.getElementById('profile-pic-input').addEventListener('blur', (e) => { portfolioData.profilePic = e.target.value; });
+            document.getElementById('contact-email-input').addEventListener('blur', (e) => { portfolioData.contact.email = e.target.value; renderContact(); });
+            document.getElementById('contact-phone-input').addEventListener('blur', (e) => { portfolioData.contact.phone = e.target.value; renderContact(); });
+
+            document.getElementById('add-skill-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.getElementById('skill-input');
+                if (input.value.trim()) { portfolioData.skills.push(input.value.trim()); input.value = ''; saveData(); }
+            });
+
+            document.getElementById('add-experience-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newExp = { title: document.getElementById('exp-title').value, company: document.getElementById('exp-company').value, dates: document.getElementById('exp-dates').value, desc: document.getElementById('exp-desc').value, };
+                portfolioData.experiences.unshift(newExp); e.target.reset(); saveData();
+            });
+
+            document.getElementById('add-portfolio-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newPort = { title: document.getElementById('port-title').value, img: document.getElementById('port-img').value, desc: document.getElementById('port-desc').value, link: document.getElementById('port-link').value, };
+                portfolioData.portfolio.unshift(newPort); e.target.reset(); saveData();
+            });
+
+            document.getElementById('add-social-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newSocial = { name: document.getElementById('social-name').value, url: document.getElementById('social-url').value };
+                portfolioData.socials.push(newSocial); e.target.reset(); saveData();
+            });
+
+            portfolioBody.addEventListener('click', (e) => {
+                if (e.target.matches('.delete-skill-btn')) { portfolioData.skills.splice(e.target.dataset.index, 1); saveData(); }
+                if (e.target.matches('.delete-exp-btn')) { portfolioData.experiences.splice(e.target.dataset.index, 1); saveData(); }
+                if (e.target.matches('.delete-port-btn')) { portfolioData.portfolio.splice(e.target.dataset.index, 1); saveData(); }
+                if (e.target.matches('.delete-social-btn')) { portfolioData.socials.splice(e.target.dataset.index, 1); saveData(); }
+            });
+        };
+
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                userId = user.uid;
+                userDocRef = doc(db, `artifacts/${appId}/users/${userId}/portfolio`, 'data');
+                onSnapshot(userDocRef, (doc) => {
+                    if (doc.exists()) { portfolioData = { ...portfolioData, ...doc.data() }; } 
+                    else { saveData(); }
+                    renderAll();
+                    loader.style.display = 'none';
+                    appContainer.style.display = 'block';
+                }, (error) => { console.error("Error listening to document: ", error); loader.textContent = "Gagal memuat data."; });
+            } else {
+                signInAnonymously(auth).catch((error) => { console.error("Error signing in anonymously: ", error); loader.textContent = "Gagal melakukan autentikasi."; });
+            }
+        });
+
+        setupEventListeners();
+    </script>
+</body>
+</html>
+
