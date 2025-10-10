@@ -4,7 +4,7 @@ let x = 10;
 let y = 20;
 
 let temp = x;
-x = yy = temp;
+x = y = temp;
 
 console.log("setelah swap: x =", x, ", y =", y);
 

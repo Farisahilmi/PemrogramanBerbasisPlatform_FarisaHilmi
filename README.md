@@ -1,3 +1,0 @@
-# PemrogramanBerbasisPlatform_FarisaHilmi
-
-
